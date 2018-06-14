@@ -101,33 +101,41 @@ decodeString("4[ab]"); // returns abababab
 decodeString("2[b3[a]]"); // returns baaabaaa
 
 var changePossibilities = function(amount, denominations) {
+    if (denominations.length < 1) return 0;
+
     let count = 0;
     const denominationValues = {};
+    denominations = denominations.sort();
+
 
     for (let denomination of denominations) {
         denominationValues[denomination] = denomination;
     }
     
+    let loop = true,
+        duplicate = false, // keeps track if there's already a duplicate answer
+        newAmount = amount,
+        denomination = denominations[0];
+
+    while (loop) {
+        newAmount -= denomination;
+        if (newAmount === denomination) duplicate = true;
         
-    for (let i = 0; i < denominations.length; i++) {
-        let loop = true,
-            newAmount = amount,
-            denomination = denominations[i];
-        while (loop) {
-            newAmount -= denomination;
-            if (newAmount < 0) {
-                loop = false;
-            } else if (newAmount === 0) {
-                count += 1;
-            } 
-            if (denominationValues[newAmount] && newAmount === denominationValues[newAmount]) {
-                newAmount -= newAmount;
-                count += 1;
-            }
+        if (newAmount < 0) {
+            loop = false;
+        } 
+        if (newAmount === 0 && !duplicate) {
+            count += 1;
+            console.log("added at:", newAmount);
+            loop = false;
+        } else if (denominationValues[newAmount]) {
+            console.log("added at:", newAmount);
+            count += 1;
         }
     }
-    return count;
+
+    return count + changePossibilities(amount, denominations.slice(1));
 }
 
-console.log(changePossibilities(4, [1, 2, 3])); // returns 4
-console.log(changePossibilities(10, [2, 5, 3, 6])); // returns 5
+changePossibilities(4, [1, 2, 3]); // returns 4
+changePossibilities(10, [2, 5, 3, 6]); // returns 5
