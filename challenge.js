@@ -1,11 +1,4 @@
 /*
-Question 2 -- decodeString(s): Given an encoded string, return its corresponding decoded string. 
-
-The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is repeated exactly k times. Note: k is guaranteed to be a positive integer. 
-
-For s = "4[ab]", the output should be decodeString(s) = "abababab" 
-For s = "2[b3[a]]", the output should be decodeString(s) = "baaabaaa"
-
 Question 3 -- changePossibilities(amount,amount): Your quirky boss collects rare, old coins. They found out you're a programmer and asked you to solve something they've been wondering for a long time. 
 
 Write a function that, given an amount of money and an array of coin denominations, computes the number of ways to make the amount of money with coins of the available denominations. 
@@ -19,8 +12,7 @@ Example: for amount=4 (4¢) and denominations=[1,2,3] (1¢, 2¢ and 3¢), your p
 */
 
 var sortByStrings = function (s, t) {
-    let result = "",
-        strObj = {};
+    let result = "";
 
     for (let i = 0; i < t.length; i++) {
         let char = t[i];
@@ -32,29 +24,13 @@ var sortByStrings = function (s, t) {
             counter++;
         }
     }
-    // for (let char of s) {
-    //   char = char.toLowerCase();
-    //     if(strObj[char]) {
-    //       strObj[char.toUpperCase()] = 1;
-    //     } else {
-    //       strObj[char] = 1;
-    //     }
-    //   }
-    // console.log(strObj);
-
-    // for (let char of t) {
-    //   char = char.toLowerCase();
-    //   if(strObj[char]) {
-    //     result += char;
-    //   }
-    // }
     return result;
 }
 
 sortByStrings("weather", "therapyw"); // returns "theeraw"
 sortByStrings("good", "odg"); // returns "oodg"
 
-var decodeString = function (s) {
+var decodeString = function(s) {
     let iterations = [],
         encoded = [],
         numbers = { 0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9"},
@@ -70,7 +46,6 @@ var decodeString = function (s) {
             while (counter >= 0) {
                 if (s[counter] === "[") {
                     iterations.push(Number(numberString));
-                    numberString = "";
                     break;
                 }
                 let number = numbers[Number(s[counter])];
@@ -81,7 +56,6 @@ var decodeString = function (s) {
 
                 if (counter === 0 && number) {
                     iterations.push(Number(numberString));
-                    numberString = "";
                 }
                 counter--;
             }
@@ -103,6 +77,7 @@ var decodeString = function (s) {
         }
     }
 
+    // decode the strings
     for (let i = iterations.length - 1; i >= 0; i--) {
         let iteration = iterations[i];
         let currString = encoded[i];
@@ -122,6 +97,37 @@ var decodeString = function (s) {
     }
 }
 
-console.log(decodeString("4[ab]")) // returns abababab
+decodeString("4[ab]"); // returns abababab
+decodeString("2[b3[a]]"); // returns baaabaaa
 
-console.log(decodeString("2[b3[a]]")) // returns baaabaaa
+var changePossibilities = function(amount, denominations) {
+    let count = 0;
+    const denominationValues = {};
+
+    for (let denomination of denominations) {
+        denominationValues[denomination] = denomination;
+    }
+    
+        
+    for (let i = 0; i < denominations.length; i++) {
+        let loop = true,
+            newAmount = amount,
+            denomination = denominations[i];
+        while (loop) {
+            newAmount -= denomination;
+            if (newAmount < 0) {
+                loop = false;
+            } else if (newAmount === 0) {
+                count += 1;
+            } 
+            if (denominationValues[newAmount] && newAmount === denominationValues[newAmount]) {
+                newAmount -= newAmount;
+                count += 1;
+            }
+        }
+    }
+    return count;
+}
+
+console.log(changePossibilities(4, [1, 2, 3])); // returns 4
+console.log(changePossibilities(10, [2, 5, 3, 6])); // returns 5
