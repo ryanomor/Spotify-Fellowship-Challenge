@@ -61,92 +61,45 @@ var decodeString = function (s) {
         temp = "",
         result = "";
 
-        // for (let i = 0; i < s.length; i++) {
-        //     let count = 0;
-        //     // Check if current character is number and push number into iterations arr
-        //     if (numbers[Number(s[i])]) {
-        //         while (numbers[Number(s[i])]) {
-        //             count = count * 10 + s[i] - "0";
-        //             i++;
-        //         }
-        //         i--;
-        //         iterations.push(count);
-        //     } else if (s[i] === ']') {
-        //         // current character is ']', pop from encoded until '[' is out
-        //         temp = "";
-        //         count = 0;
-        //         if (iterations.length > 0) {
-        //             count = iterations[iterations.length - 1];
-        //             iterations.pop();
-        //         }
-        //         while (encoded.length > 0 && encoded[encoded.length - 1] !== '[') {
-        //             temp = encoded[encoded.length - 1] + temp;
-        //             encoded.pop();
-        //         }
-        //         if (encoded.length > 0 && encoded[encoded.length - 1] === '[') {
-        //             encoded.pop();
-        //         }
-        //         // Repeating the popped string 'temp' count number of times.
-        //         for (let j = 0; j < count; j++){
-        //             result = result + temp;
-        //         }
-      
-        //         // Push to character stack.
-        //         for (let j = 0; j < result.length; j++) {
-        //             encoded.push(result[j]);
-        //         }
-      
-        //         result = "";
-        //     } else if (s[i] === '[') {
-        //         if (numbers[Number(s[i - 1])]) {
-        //             encoded.push(s[i]);
-        //         } else {
-        //             encoded.push(s[i]);
-        //             iterations.push(1);
-        //         }
-        //     } else {
-        //         encoded.push(s[i]);
-        //     }
-        //     // Pop all the elmenet, make a string and return.
-        //     while (encoded.length > 0) {
-        //         result = encoded[encoded.length - 1] + result;
-        //         encoded.pop();
-        //     }
-        
-        // }
-        // return result;
-
     for (let i = 0; i < s.length; i++) {
         let counter;
         if (s[i] === "[") {
+            // create the iterations list
             counter = i - 1;
             let numberString = "";
             while (counter >= 0) {
+                if (s[counter] === "[") {
+                    iterations.push(Number(numberString));
+                    numberString = "";
+                    break;
+                }
                 let number = numbers[Number(s[counter])];
                 
                 if (number) {
                     numberString = number + numberString;
-                } else {
+                }
+
+                if (counter === 0 && number) {
                     iterations.push(Number(numberString));
-                    break;
+                    numberString = "";
                 }
                 counter--;
-                console.log(numberString);
             }
 
-            // counter = i + 1;
-            // let string = "";
-            // while (counter < s.length) {
-
-            //     if (isNaN(s[counter])) {
-            //         string += s[counter];
-            //     } else {
-            //         encoded.push(string);
-            //         string = "";
-            //         break;
-            //     }
-            //     counter++;
-            // }
+            // create the encodedString list
+            counter = i + 1;
+            let encodedString = "";
+            while (counter < s.length) {
+                if (s[counter] === "]" || numbers[Number(s[counter])]) {
+                    encoded.push(encodedString);
+                    encodedString = "";
+                    break;
+                }
+                if (!numbers[s[counter]]) {
+                    encodedString += s[counter];
+                } 
+                counter++;
+            }
         }
         // if (s[0] == "]") return;
         // if (isNaN(Number(s[0]))) {
@@ -154,9 +107,9 @@ var decodeString = function (s) {
         // }
 
     }
-    // return { iterations: iterations, encoded: encoded };
+    return { iterations: iterations, encoded: encoded };
 }
 
 console.log(decodeString("4[ab]")) // returns abababab
 
-console.log(decodeString("23[b3[a]]")) // returns baaabaaa
+console.log(decodeString("20[b3[a]]")) // returns baaabaaa
