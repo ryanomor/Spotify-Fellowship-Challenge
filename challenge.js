@@ -101,15 +101,27 @@ var decodeString = function (s) {
                 counter++;
             }
         }
-        // if (s[0] == "]") return;
-        // if (isNaN(Number(s[0]))) {
-        //   return decodeString(s.slice(1, s.length - 1));
-        // }
-
     }
-    return { iterations: iterations, encoded: encoded };
+
+    for (let i = iterations.length - 1; i >= 0; i--) {
+        let iteration = iterations[i];
+        let currString = encoded[i];
+        let newString = "";
+
+        while (iteration > 0) {
+            newString += currString;
+            if (iteration === 1 && i > 0) {
+                temp = encoded[i - 1];
+                newString = temp + newString;
+                encoded[i - 1] = newString;
+            } else if (iteration === 1 && i === 0) {
+                return newString;
+            }
+            iteration--;
+        }
+    }
 }
 
 console.log(decodeString("4[ab]")) // returns abababab
 
-console.log(decodeString("20[b3[a]]")) // returns baaabaaa
+console.log(decodeString("2[b3[a]]")) // returns baaabaaa
